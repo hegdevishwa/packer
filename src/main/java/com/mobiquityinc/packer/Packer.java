@@ -1,6 +1,7 @@
 package com.mobiquityinc.packer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -69,10 +70,9 @@ public class Packer {
 
 		Map<Integer, List<Item>> packageItemMap = new LinkedHashMap<>();
 
-		try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
+		try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
 
 			stream.map(Packer::validateInput).map(Packer::removeSeperators).forEach((line) -> {
-
 				String[] arr1 = line.split(":");
 				int maxPackWeight = (Integer.parseInt(arr1[0].replaceAll("\\s+", "")));
 
@@ -100,7 +100,8 @@ public class Packer {
 	}
 
 	private static String validateInput(String line) {
-		String regex = "\\d+\\s:(\\s\\(\\d+,\\d+.\\d+,\\d+\\))+";
+		System.out.println(line);
+		String regex = "\\d+\\s:(\\s\\(\\d+,\\d+.\\d+,(\\\\u20AC)\\d+\\))+";
 		System.out.println(line.matches(regex));
 
 		if (!line.matches(regex)) {
@@ -110,8 +111,7 @@ public class Packer {
 	}
 
 	private static String removeSeperators(String line) {
-		line.replaceAll("[()€]", "");
-		return line;
+		return line.replaceAll("[()€]", "");
 	}
 
 	private static void sortItems(List<Item> items) {
@@ -132,7 +132,7 @@ public class Packer {
 	}
 
 	public static void main(String[] args) throws IOException {
-		pack("D:\\workspace-test\\packer\\res\\input.txt");
+		pack("C:\\Workspace\\packer\\packer\\src\\main\\java\\resource\\ip");
 
 	}
 }
