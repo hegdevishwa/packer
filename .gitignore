@@ -21,3 +21,11 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+.classpath
+.project
+.settings/org.eclipse.jdt.apt.core.prefs
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.m2e.core.prefs
+target/classes/META-INF/MANIFEST.MF
+target/classes/META-INF/maven/com.mobiquityinc/packer/pom.properties
+target/classes/META-INF/maven/com.mobiquityinc/packer/pom.xml
