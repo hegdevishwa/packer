@@ -1,4 +1,4 @@
-package com.mobiquityinc.packer.model;
+package com.mobiquityinc.packer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.mobiquityinc.packer.Item;
+import com.mobiquityinc.packer.Pack;
 
 @RunWith(JUnit4.class)
 public class PackTest {

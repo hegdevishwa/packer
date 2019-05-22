@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import com.mobiquityinc.exception.APIException;
-import com.mobiquityinc.packer.model.Item;
-import com.mobiquityinc.packer.model.Pack;
 
 public class Packer {
 

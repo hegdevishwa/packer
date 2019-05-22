@@ -1,4 +1,4 @@
-package com.mobiquityinc.packer.model;
+package com.mobiquityinc.packer;
 
 public class Item implements Comparable<Item> {
 
