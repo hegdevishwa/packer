@@ -16,8 +16,7 @@ public class Packer {
 
 	public static String pack(String filePath) {
 
-		// LinkedHashMap maintains the insertion order. This will help in getting the
-		// output as in the spec.
+		// LinkedHashMap maintains the insertion order.
 		Map<Integer, List<Item>> packageItemMap = parseInput(filePath);
 
 		List<Pack> finalConsignment = perparePackage(packageItemMap);
@@ -28,8 +27,47 @@ public class Packer {
 			sb.append("\n");
 		}
 
-		System.out.println(sb.toString());
-		return null;
+		return sb.toString();
+	}
+
+	
+	/**
+	 * Parses the input file and extracts the values.
+	 * @param filePath
+	 * @return a LinkedHashMap of max allowed weight for a pack as key and a list items to put in pack.
+	 */
+	private static Map<Integer, List<Item>> parseInput(String filePath) {
+
+		Map<Integer, List<Item>> packageItemMap = new LinkedHashMap<>();
+
+		try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
+
+			stream.map(Packer::validateInput).map(Packer::removeSeperators).forEach((line) -> {
+				String[] arr1 = line.split(":");
+				int maxPackWeight = (Integer.parseInt(arr1[0].replaceAll("\\s+", "")));
+
+				List<Item> items = new ArrayList<>();
+				String[] strArr = arr1[1].split("\\s+");
+
+				for (String str : strArr) {
+					if (!str.isEmpty()) {
+						Item item = new Item();
+						String[] values = str.split(",");
+						item.setIndex(Integer.valueOf(values[0]));
+						item.setWeight(Float.parseFloat(values[1]));
+						item.setCost(Float.parseFloat(values[2]));
+						if (item.getWeight() <= maxPackWeight) {
+							items.add(item);
+						}
+					}
+				}
+				packageItemMap.put(maxPackWeight, items);
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new APIException("No such file found", e);
+		}
+		return packageItemMap;
 	}
 
 	private static List<Pack> perparePackage(Map<Integer, List<Item>> packageItemMap) {
@@ -66,44 +104,9 @@ public class Packer {
 
 	}
 
-	private static Map<Integer, List<Item>> parseInput(String filePath) {
-
-		Map<Integer, List<Item>> packageItemMap = new LinkedHashMap<>();
-
-		try (Stream<String> stream = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8)) {
-
-			stream.map(Packer::validateInput).map(Packer::removeSeperators).forEach((line) -> {
-				String[] arr1 = line.split(":");
-				int maxPackWeight = (Integer.parseInt(arr1[0].replaceAll("\\s+", "")));
-
-				List<Item> items = new ArrayList<>();
-				String[] strArr = arr1[1].split("\\s+");
-
-				for (String str : strArr) {
-					if (!str.isEmpty()) {
-						Item item = new Item();
-						String[] values = str.split(",");
-						item.setIndex(Integer.valueOf(values[0]));
-						item.setWeight(Float.parseFloat(values[1]));
-						item.setCost(Float.parseFloat(values[2]));
-						if (item.getWeight() <= maxPackWeight) {
-							items.add(item);
-						}
-					}
-				}
-				packageItemMap.put(maxPackWeight, items);
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return packageItemMap;
-	}
-
 	private static String validateInput(String line) {
 		System.out.println(line);
-		String regex = "\\d+\\s:(\\s\\(\\d+,\\d+.\\d+,(\\\\u20AC)\\d+\\))+";
-		System.out.println(line.matches(regex));
-
+		String regex = "\\d+\\s:(\\s\\(\\d+,\\d+\\.*\\d*,(\\u20AC)\\d+\\.*\\d*\\))+";
 		if (!line.matches(regex)) {
 			throw new APIException("Invalid input");
 		}
@@ -116,9 +119,12 @@ public class Packer {
 
 	private static void sortItems(List<Item> items) {
 		items.sort((Item i1, Item i2) -> {
-			return (int) Math.signum(i2.getCost() - i1.getCost());
+			int order = (int) Math.signum(i2.getCost() - i1.getCost());
+			if (order == 0) {
+				order = (int) Math.signum(i1.getWeight() - i2.getWeight());
+			}
+			return order;
 		});
-
 	}
 
 	private static void sortPacks(List<Pack> packs) {
@@ -132,7 +138,7 @@ public class Packer {
 	}
 
 	public static void main(String[] args) throws IOException {
-		pack("C:\\Workspace\\packer\\packer\\src\\main\\java\\resource\\ip");
+		pack("C:\\Workspace\\packer\\packer\\src\\main\\java\\resource\\gubba.txt");
 
 	}
 }
