@@ -14,7 +14,8 @@ public class Packer {
 
 	public static String pack(String filePath) throws APIException {
 
-		// LinkedHashMap maintains the insertion order.
+		// LinkedHashMap maintains the insertion order. This will allow us to print the
+		// result in order of input
 		Map<Integer, List<Item>> packageItemMap = parseInput(filePath);
 
 		List<Pack> finalConsignment = perparePackages(packageItemMap);
@@ -41,36 +42,39 @@ public class Packer {
 
 		List<String> lines = null;
 		try {
+			// Read lines
 			lines = Files.readAllLines(Paths.get(filePath));
 		} catch (IOException e) {
 			throw new APIException("No such file found", e);
 		}
 
 		for (String line : lines) {
+			// Validate input
 			validateInput(line);
+			// Remove input separator characters
 			line = removeSeperators(line);
 
-			String[] arr1 = line.split(":");
-			int maxPackWeight = (Integer.parseInt(arr1[0].replaceAll("\\s+", "")));
+			//Split the line at ":" to extract max weight and input items
+			String[] arr = line.split(":");
+			int maxPackWeight = (Integer.parseInt(arr[0].replaceAll("\\s+", "")));
 
 			List<Item> items = new ArrayList<>();
-			String[] strArr = arr1[1].split("\\s+");
+			//Split the input items at space to get values for each items
+			String[] inputValues = arr[1].split("\\s+");
 
-			for (String str : strArr) {
+			for (String str : inputValues) {
 				if (!str.isEmpty()) {
 					Item item = createItem(maxPackWeight, str);
 
-					// Check if the weight of the item is less than allowed weight of th pack
+					// Check if the weight of the item is less than allowed weight of the pack
 					// if not skip the item
 					if (item.getWeight() <= maxPackWeight) {
 						items.add(item);
 					}
 				}
-
 			}
 			packageItemMap.put(maxPackWeight, items);
 		}
-
 		return packageItemMap;
 	}
 
@@ -81,17 +85,19 @@ public class Packer {
 	 * consignment
 	 * 
 	 * @param packageItemMap
-	 * @return a list of packeges chosen based on above criteria
+	 * @return a list of packages chosen based on above criteria
 	 */
 	private static List<Pack> perparePackages(Map<Integer, List<Item>> packageItemMap) {
 
 		ArrayList<Pack> finalConsignment = new ArrayList<>();
 		packageItemMap.forEach((weight, items) -> {
 
+			//Sort the items to pick the item of highest value
 			sortItems(items);
 
 			List<Pack> passiblePacks = new ArrayList<>();
 			Pack pack;
+			//Try different combinations of pack and store the values
 			for (int i = 0; i < items.size(); i++) {
 				pack = new Pack();
 				pack.setMaxWeight(weight);
@@ -102,12 +108,16 @@ public class Packer {
 				passiblePacks.add(pack);
 			}
 
+			//Sort all the possible packs to pick the pack containing items of maximum value
 			sortPacks(passiblePacks);
 
 			if (passiblePacks.size() > 0) {
 				finalConsignment.add(passiblePacks.get(0));
 			} else {
-				finalConsignment.add(new Pack());
+				//If there is no pack available then set a pack with no items in it.
+				pack = new Pack();
+				pack.setMaxWeight(weight);
+				finalConsignment.add(pack);
 			}
 		});
 		return finalConsignment;
@@ -117,29 +127,33 @@ public class Packer {
 	 * Validates the input string is according to spec. Throws APIExceptin if the
 	 * string is not valid
 	 * 
-	 * @param String line to be validated
+	 * @param String
+	 *            line to be validated
 	 * @throws APIException
 	 */
 	private static void validateInput(String line) throws APIException {
 		String regex = "\\d+\\s:(\\s\\(\\d+,\\d+\\.*\\d*,(\\u20AC)\\d+\\.*\\d*\\))+";
 		if (!line.matches(regex)) {
-			throw new APIException("Invalid input");
+			throw new APIException("Invalid input in line: " + line);
 		}
 	}
 
 	/**
-	 * Removes the input seperator characters
+	 * Removes the input separator characters
 	 * 
 	 * @param line
 	 * @return
 	 */
 	private static String removeSeperators(String line) {
-		return line.replaceAll("[()€]", "");
+		return line.replaceAll("[()(\\u20AC)]", "");
 	}
 
 	/**
-	 * Sorts the items list in descending order of their cost. If there are two
-	 * items of the same cost then choose one with the less weight
+	 * Sorts the items list in descending order of their cost. If there are more
+	 * than one item of same cost then choose the one with the less weight. This way
+	 * we always choose the first item with highest cost and if there are multiple
+	 * items of same cost we choose an item with highest cost but least weight among
+	 * those items.
 	 * 
 	 * @param items
 	 */
@@ -154,8 +168,12 @@ public class Packer {
 	}
 
 	/**
-	 * Sorts all the psooible packs in descending order of their cost. If there are
-	 * two items of the same cost then choose one with the less weight
+	 * Sorts all the possible packs in descending order of their total value. If
+	 * there are more than one items with same total value, then choose the one with
+	 * the lest total weight. This way we always choose the first pack with the
+	 * highest total value and if there are multiple packs of the same value we
+	 * still choose an item with highest value but with least weight among those
+	 * available combination of packs.
 	 * 
 	 * @param items
 	 */
