@@ -29,3 +29,4 @@ hs_err_pid*
 target/classes/META-INF/MANIFEST.MF
 target/classes/META-INF/maven/com.mobiquityinc/packer/pom.properties
 target/classes/META-INF/maven/com.mobiquityinc/packer/pom.xml
+target/**

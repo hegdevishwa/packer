@@ -8,8 +8,8 @@ import com.mobiquityinc.exception.APIException;
 
 public class PackerTest {
 
-	private static String validInputFile = "D:\\open-repo\\packer\\src\\test\\java\\resource\\valid-input-file.txt";
-	private static String invalidInputFile = "D:\\open-repo\\packer\\src\\test\\java\\resource\\invalid-input-file.txt";
+	private static String validInputFile = "C:\\Workspace\\packer\\packer\\src\\test\\java\\resource\\valid-input-file.txt";
+	private static String invalidInputFile = "C:\\Workspace\\packer\\packer\\src\\test\\java\\resource\\invalid-input-file.txt";
 
 	@Test
 	public void testPack_with_valid_input_format() throws APIException {
@@ -23,5 +23,11 @@ public class PackerTest {
 	public void testPack_with_invalid_input_format() throws APIException {
 		Packer.pack(invalidInputFile);
 	}
+	
+	@Test(expected = APIException.class)
+	public void testPack_no_file_available() throws APIException {
+		Packer.pack("fileDoesNotExist");
+	}
+
 
 }
