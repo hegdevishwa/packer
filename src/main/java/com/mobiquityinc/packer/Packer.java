@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class Packer {
 		Map<Integer, List<Item>> packageItemMap = parseInput(filePath);
 
 		List<Pack> finalConsignment = perparePackages(packageItemMap);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (Pack pack : finalConsignment) {
 			sb.append(pack.getItemsIndexList());
@@ -158,13 +159,14 @@ public class Packer {
 	 * @param items
 	 */
 	private static void sortItems(List<Item> items) {
-		items.sort((Item i1, Item i2) -> {
-			int order = (int) Math.signum(i2.getCost() - i1.getCost());
-			if (order == 0) {
-				order = (int) Math.signum(i1.getWeight() - i2.getWeight());
-			}
-			return order;
-		});
+		Collections.sort(items);
+//		items.sort((Item i1, Item i2) -> {
+//			int order = (int) Math.signum(i2.getCost() - i1.getCost());
+//			if (order == 0) {
+//				order = (int) Math.signum(i1.getWeight() - i2.getWeight());
+//			}
+//			return order;
+//		});
 	}
 
 	/**
@@ -178,13 +180,14 @@ public class Packer {
 	 * @param items
 	 */
 	private static void sortPacks(List<Pack> packs) {
-		packs.sort((Pack p1, Pack p2) -> {
-			int order = (int) Math.signum(p2.getTotalValue() - p1.getTotalValue());
-			if (order == 0) {
-				order = (int) Math.signum(p1.getTotalWeight() - p2.getTotalWeight());
-			}
-			return order;
-		});
+		Collections.sort(packs);
+//		packs.sort((Pack p1, Pack p2) -> {
+//			int order = (int) Math.signum(p2.getTotalValue() - p1.getTotalValue());
+//			if (order == 0) {
+//				order = (int) Math.signum(p1.getTotalWeight() - p2.getTotalWeight());
+//			}
+//			return order;
+//		});
 	}
 
 	private static Item createItem(int maxPackWeight, String str) {
