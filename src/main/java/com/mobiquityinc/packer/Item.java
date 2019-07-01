@@ -1,6 +1,6 @@
 package com.mobiquityinc.packer;
 
-public class Item {
+public class Item implements Comparable<Item> {
 
 	int index;
 	float weight;
@@ -32,6 +32,15 @@ public class Item {
 
 	public void setCost(float cost) {
 		this.cost = cost;
+	}
+
+	@Override
+	public int compareTo(Item that) {
+		int order = (int) Math.signum(that.getCost() - this.getCost());
+		if (order == 0) {
+			order = (int) Math.signum(this.getWeight() - that.getWeight());
+		}
+		return order;
 	}
 
 }
