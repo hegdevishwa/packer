@@ -3,7 +3,7 @@ package com.mobiquityinc.packer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pack {
+public class Pack implements Comparable<Pack> {
 
 	private int maxWeight;
 	private List<Item> items;
@@ -72,6 +72,16 @@ public class Pack {
 			return 0;
 		}
 
+	}
+
+	@Override
+	public int compareTo(Pack that) {
+
+		int order = (int) Math.signum(that.getTotalValue() - this.getTotalValue());
+		if (order == 0) {
+			order = (int) Math.signum(this.getTotalWeight() - that.getTotalWeight());
+		}
+		return order;
 	}
 
 }
